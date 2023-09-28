@@ -7,17 +7,19 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const collectionUrlPrefix = "https://opensea.io/collection/"
   const [collectionUrlSuffix, setCollectionUrlSuffix] = useState("")
-  const [status, setStatus] = useState("Please input the NFT collection url above")
   const [collectionItems, setCollectionItems] = useState<CollectionItemData[]>([])
   const [hasNextPage, setHasNextPage] = useState(false)
   const [nextPageCursor, setNextPageCursor] = useState("")
 
   async function getCollectionDataFromOpenSea(nextPageCursor: string | undefined = undefined){
     setLoading(true)
-    setStatus("Getting data from OpenSea")
     if(nextPageCursor === undefined){
       setHasNextPage(false)
       setNextPageCursor("")
+    }
+    let suffix = collectionUrlSuffix
+    if(suffix.startsWith(collectionUrlPrefix)){
+      suffix.split(collectionUrlPrefix)[1]
     }
     let url = `/api/getCollection?collectionUrlSuffix=${collectionUrlSuffix}`
     if(nextPageCursor){
@@ -26,7 +28,9 @@ export default function Home() {
     const response = await fetch( url, { method: "GET" } );
     const respJson: GetCollectionData = await response.json();
     if(respJson.error !== undefined && respJson.error !== null){
-      throw respJson.error
+      alert(respJson.error)
+      setLoading(false)
+      return
     }
     if(nextPageCursor === undefined){
       setCollectionItems(respJson.collectionItems)
@@ -37,7 +41,6 @@ export default function Home() {
     setNextPageCursor(respJson.nextPageCursor ?? "")
 
     setLoading(false)
-    setStatus("The collection is displayed below")
   }
 
   return (
@@ -47,7 +50,7 @@ export default function Home() {
           Display NFT Collection
         </label>
         <div className='sm:hidden mt-2 mb-[-10px]'>
-          <p className='text-center text-gray-500'>{collectionUrlPrefix}</p>
+          <p className='text-center text-gray-500'>{collectionUrlPrefix+"[input-this-part]"}</p>
         </div>
         <div className="mt-2 flex flex-wrap rounded-md shadow-sm">
           <span className="hidden sm:inline-flex items-center rounded-l-md border border-r-0 border-gray-300 px-3 text-gray-500 sm:text-sm">
@@ -57,8 +60,8 @@ export default function Home() {
             type="text"
             name="opensea-collection"
             id="opensea-collection"
-            className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            placeholder="noble-gallery"
+            className="block w-full min-w-0 flex-1 rounded-none rounded-l-md sm:rounded-none border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            placeholder="s16nftofficial"
             value = {collectionUrlSuffix}
             onChange={(event) => setCollectionUrlSuffix(event.target.value)}
             onKeyUp={(event) => {
@@ -69,7 +72,7 @@ export default function Home() {
           />
           <button
             type="button"
-            className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
             onClick={()=>{
               getCollectionDataFromOpenSea()
             }}
@@ -79,9 +82,6 @@ export default function Home() {
             Search
           </button>
         </div>
-      </div>
-      <div className="text-center shadow-md my-3 mx-auto max-w-7xl py-3 px-3 sm:px-6 lg:px-8 bg-white">
-        <p>{status}</p>
       </div>
       {
         collectionItems.length === 0 ? <></> :
@@ -107,7 +107,7 @@ export default function Home() {
         <div className="text-center shadow-md mt-3 mx-auto max-w-7xl py-3 px-3 sm:px-6 lg:px-8 bg-white">
           <button
             type="button"
-            className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
             onClick={()=>{
               getCollectionDataFromOpenSea(nextPageCursor)
             }}

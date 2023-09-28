@@ -22,7 +22,7 @@ export default async function handler(
   const collectionUrlSuffix = req.query.collectionUrlSuffix
   if(collectionUrlSuffix === undefined){
     res.status(200).json({
-      error: "collectionUrlSuffix is undefined",
+      error: "Mohon mengisi url path koleksi",
       collectionItems: [],
       nextPageCursor: undefined,
     })
@@ -30,7 +30,7 @@ export default async function handler(
   }
   if(collectionUrlSuffix === ""){
     res.status(200).json({
-      error: "collectionUrlSuffix is empty",
+      error: "Mohon mengisi url path koleksi",
       collectionItems: [],
       nextPageCursor: undefined,
     })
