@@ -59,7 +59,7 @@ async function parseResponseFromOpenSeaCollectionGraphQL(
   const jsonResp = await response.json()
   const collectionItems = jsonResp.data.collectionItems.edges.map(function(e: any){
     const ethPriceNum = e.node.orderData.bestAskV2?.priceType.eth
-    let ethPriceStr = "N/A"
+    let ethPriceStr = "No price found"
     if(ethPriceNum !== undefined){
       ethPriceStr = ethPriceNum + " ETH"
     }
